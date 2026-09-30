@@ -1,52 +1,25 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function ProfilePage() {
-    const supabase = createClient()
-    const [userId, setUserId] = useState('')
+export default function CompleteProfilePage() {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
-    const [avatarUrl, setAvatarUrl] = useState('')
-    const [file, setFile] = useState<File | null>(null)
-    const [message, setMessage] = useState('')
+    const [error, setError] = useState('')
+    const router = useRouter()
 
-    useEffect(() => {
-        const load = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-            setUserId(user.id)
-            const { data } = await supabase
-                .from('profiles')
-                .select('first_name, last_name, avatar_url')
-                .eq('id', user.id)
-                .single()
-            if (data) {
-                setFirstName(data.first_name ?? '')
-                setLastName(data.last_name ?? '')
-                setAvatarUrl(data.avatar_url ?? '')
-            }
-        }
-        load()
-    }, [])
-
-    const handleSave = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        setMessage('Saving...')
-        let newAvatarUrl = avatarUrl
+        const supabase = createClient()
+        const {
+            data: { user },
+        } = await supabase.auth.getUser()
 
-        if (file) {
-            const path = `${userId}/avatar.png`
-            const { error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(path, file, { upsert: true })
-            if (uploadError) {
-                setMessage('Upload error: ' + uploadError.message)
-                return
-            }
-            const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-            newAvatarUrl = `${data.publicUrl}?t=${Date.now()}`
+        if (!user) {
+            router.push('/login')
+            return
         }
 
         const { error } = await supabase
@@ -54,35 +27,53 @@ export default function ProfilePage() {
             .update({
                 first_name: firstName,
                 last_name: lastName,
-                avatar_url: newAvatarUrl,
                 updated_at: new Date().toISOString(),
             })
-            .eq('id', userId)
+            .eq('id', user.id)
 
         if (error) {
-            setMessage('Error: ' + error.message)
+            setError(error.message)
             return
         }
-        setAvatarUrl(newAvatarUrl)
-        setMessage('Profile saved!')
+
+        router.push('/')
+        router.refresh()
     }
 
     return (
-        <main style={{ padding: 40, fontFamily: 'sans-serif', maxWidth: 400 }}>
-            <h1>Your Profile</h1>
-            {avatarUrl && (
-                <img
-                    src={avatarUrl}
-                    alt="Profile photo"
-                    style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover' }}
+        <main
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                fontFamily: 'sans-serif',
+            }}
+        >
+            <h1>Complete your profile</h1>
+            <form
+                onSubmit={handleSubmit}
+                style={{ display: 'flex', flexDirection: 'column', gap: 12, width: 280 }}
+            >
+                <input
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    style={{ padding: 10, fontSize: 16 }}
                 />
-            )}
-            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-                <input placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ padding: 10 }} />
-                <input placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} style={{ padding: 10 }} />
-                <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-                <button type="submit" style={{ padding: 10, cursor: 'pointer' }}>Save</button>
-                {message && <p>{message}</p>}
+                <input
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                    style={{ padding: 10, fontSize: 16 }}
+                />
+                <button type="submit" style={{ padding: 10, fontSize: 16, cursor: 'pointer' }}>
+                    Save
+                </button>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
             </form>
         </main>
     )
