@@ -29,7 +29,7 @@ export default function Nav() {
             <Link href="/">Home</Link>
             {loggedIn ? (
                 <>
-                    <Link href="/profile">Profile</Link>
+                    <Link href="/generate">Create</Link>
                     <Link href="/dashboard">Dashboard</Link>
                     <button onClick={signOut} style={{ cursor: 'pointer' }}>Sign out</button>
                 </>

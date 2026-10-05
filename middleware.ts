@@ -34,8 +34,8 @@ export async function middleware(request: NextRequest) {
     const isProtected =
         path.startsWith('/profile') ||
         path.startsWith('/dashboard') ||
+        path.startsWith('/generate') ||
         path.startsWith('/complete-profile')
-
     // Not logged in -> protected pages send you to /login
     if (!user && isProtected) {
         const url = request.nextUrl.clone()
