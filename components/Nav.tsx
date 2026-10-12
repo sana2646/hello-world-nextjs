@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function Nav() {
     const supabase = createClient()
     const router = useRouter()
+    const pathname = usePathname()
     const [loggedIn, setLoggedIn] = useState(false)
 
     useEffect(() => {
@@ -20,22 +21,42 @@ export default function Nav() {
 
     const signOut = async () => {
         await supabase.auth.signOut()
-        router.push('/login')
+        router.push('/')
         router.refresh()
     }
 
+    const link = (href: string, label: string) => (
+        <Link href={href} className={`nav-link ${pathname === href ? 'active' : ''}`}>
+            {label}
+        </Link>
+    )
+
     return (
-        <nav style={{ display: 'flex', gap: 16, padding: 16, borderBottom: '1px solid #ccc', fontFamily: 'sans-serif' }}>
-            <Link href="/">Home</Link>
-            {loggedIn ? (
-                <>
-                    <Link href="/generate">Create</Link>
-                    <Link href="/dashboard">Dashboard</Link>
-                    <button onClick={signOut} style={{ cursor: 'pointer' }}>Sign out</button>
-                </>
-            ) : (
-                <Link href="/login">Sign in</Link>
-            )}
+        <nav className="nav">
+            <div className="nav-inner">
+                <Link href="/" className="logo">
+                    NYC Caption <span>Club</span>
+                </Link>
+                <div className="nav-links">
+                    {link('/', 'Feed')}
+                    {loggedIn ? (
+                        <>
+                            {link('/dashboard', 'My Posts')}
+                            {link('/profile', 'Profile')}
+                            <button onClick={signOut} className="nav-link">
+                                Sign out
+                            </button>
+                            <Link href="/generate" className="btn btn-primary" style={{ marginLeft: 6 }}>
+                                + Post
+                            </Link>
+                        </>
+                    ) : (
+                        <Link href="/login" className="btn btn-primary" style={{ marginLeft: 6 }}>
+                            Sign in
+                        </Link>
+                    )}
+                </div>
+            </div>
         </nav>
     )
 }

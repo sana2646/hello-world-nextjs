@@ -43,7 +43,6 @@ export default function VoteButtons({ captionId, initialScore, initialUserVote, 
                 setScore(previousScore)
             }
         } else {
-            // New vote, or switching from up to down (or down to up)
             setUserVote(value)
             setScore(score - userVote + value)
             const { error } = await supabase
@@ -61,26 +60,25 @@ export default function VoteButtons({ captionId, initialScore, initialUserVote, 
         setBusy(false)
     }
 
-    const buttonStyle = (active: boolean) => ({
-        padding: '6px 12px',
-        fontSize: 18,
-        borderRadius: 8,
-        border: '1px solid #555',
-        cursor: 'pointer',
-        background: active ? '#4f46e5' : 'transparent',
-        color: active ? 'white' : 'inherit',
-    })
+    const hint = userId ? undefined : 'Sign in to vote'
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button onClick={() => vote(1)} style={buttonStyle(userVote === 1)} aria-label="Upvote">
+        <div className="vote" title={hint}>
+            <button
+                onClick={() => vote(1)}
+                className={`vote-btn up ${userVote === 1 ? 'active' : ''}`}
+                aria-label="Upvote"
+            >
                 ▲
             </button>
-            <strong style={{ minWidth: 24, textAlign: 'center' }}>{score}</strong>
-            <button onClick={() => vote(-1)} style={buttonStyle(userVote === -1)} aria-label="Downvote">
+            <span className="score">{score}</span>
+            <button
+                onClick={() => vote(-1)}
+                className={`vote-btn down ${userVote === -1 ? 'active' : ''}`}
+                aria-label="Downvote"
+            >
                 ▼
             </button>
-            {!userId && <span style={{ fontSize: 12, color: '#888' }}>Sign in to vote</span>}
         </div>
     )
 }

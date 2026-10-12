@@ -8,10 +8,12 @@ export default function CompleteProfilePage() {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [error, setError] = useState('')
+    const [saving, setSaving] = useState(false)
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setSaving(true)
         const supabase = createClient()
         const {
             data: { user },
@@ -33,6 +35,7 @@ export default function CompleteProfilePage() {
 
         if (error) {
             setError(error.message)
+            setSaving(false)
             return
         }
 
@@ -41,40 +44,24 @@ export default function CompleteProfilePage() {
     }
 
     return (
-        <main
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh',
-                fontFamily: 'sans-serif',
-            }}
-        >
-            <h1>Complete your profile</h1>
-            <form
-                onSubmit={handleSubmit}
-                style={{ display: 'flex', flexDirection: 'column', gap: 12, width: 280 }}
-            >
-                <input
-                    placeholder="First name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                    style={{ padding: 10, fontSize: 16 }}
-                />
-                <input
-                    placeholder="Last name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                    style={{ padding: 10, fontSize: 16 }}
-                />
-                <button type="submit" style={{ padding: 10, fontSize: 16, cursor: 'pointer' }}>
-                    Save
-                </button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-            </form>
+        <main className="center-page">
+            <div className="card auth-card">
+                <div style={{ fontSize: 44 }}>👋</div>
+                <h1 className="page-title" style={{ marginTop: 8 }}>
+                    Welcome!
+                </h1>
+                <p className="subtitle" style={{ marginBottom: 24 }}>
+                    What should we call you?
+                </p>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <input className="input" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                    <input className="input" placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+                    <button type="submit" disabled={saving} className="btn btn-primary btn-lg btn-block">
+                        {saving ? 'Saving…' : 'Continue'}
+                    </button>
+                    {error && <p className="error">{error}</p>}
+                </form>
+            </div>
         </main>
     )
 }

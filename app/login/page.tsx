@@ -7,39 +7,27 @@ export default function LoginPage() {
         const supabase = createClient()
         await supabase.auth.signInWithOAuth({
             provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
-            },
+            options: { redirectTo: `${window.location.origin}/auth/callback` },
         })
     }
 
     return (
-        <main
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh',
-                fontFamily: 'sans-serif',
-                gap: 16,
-            }}
-        >
-            <h1>Sign in</h1>
-            <button
-                onClick={signInWithGoogle}
-                style={{
-                    padding: '12px 24px',
-                    fontSize: 16,
-                    borderRadius: 8,
-                    border: '1px solid #ccc',
-                    cursor: 'pointer',
-                    background: 'white',
-                    color: 'black',
-                }}
-            >
-                Sign in with Google
-            </button>
+        <main className="center-page">
+            <div className="card auth-card">
+                <div style={{ fontSize: 44 }}>🗽</div>
+                <h1 className="page-title" style={{ marginTop: 8 }}>
+                    NYC Caption Club
+                </h1>
+                <p className="subtitle" style={{ marginBottom: 24 }}>
+                    Post your NYC moments, get AI captions, and vote on the funniest ones.
+                </p>
+                <button onClick={signInWithGoogle} className="btn btn-primary btn-lg btn-block">
+                    Continue with Google
+                </button>
+                <p className="muted small" style={{ marginTop: 16 }}>
+                    You can browse the feed without signing in.
+                </p>
+            </div>
         </main>
     )
 }

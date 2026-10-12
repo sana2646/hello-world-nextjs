@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0b0b10;
+  --card: #15151d;
+  --card-hover: #1c1c27;
+  --border: #272733;
+  --text: #f4f4f6;
+  --muted: #9b9bab;
+  --accent: #7c6cff;
+  --accent-soft: rgba(124, 108, 255, 0.15);
+  --sunset: #ff7a59;
+  --danger: #ff5c6c;
+  --radius: 16px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+html, body { background: var(--bg); color: var(--text); }
+body { font-family: var(--font-geist-sans), system-ui, sans-serif; }
+a { color: inherit; text-decoration: none; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+.container { width: 100%; max-width: 640px; margin: 0 auto; padding: 28px 16px 80px; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Nav */
+.nav { position: sticky; top: 0; z-index: 10; background: rgba(11, 11, 16, 0.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.nav-inner { max-width: 960px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.logo { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+.logo span { color: var(--sunset); }
+.nav-links { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.nav-link { padding: 8px 12px; border-radius: 999px; color: var(--muted); font-size: 14px; background: none; border: none; cursor: pointer; }
+.nav-link:hover, .nav-link.active { color: var(--text); background: var(--card); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: transform .1s, background .15s, opacity .15s; }
+.btn:hover { background: var(--card-hover); }
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: white; }
+.btn-primary:hover { background: #6a59f5; }
+.btn-lg { padding: 14px 24px; font-size: 16px; }
+.btn-block { width: 100%; }
+
+/* Text */
+.page-title { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.subtitle { color: var(--muted); margin-top: 6px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.error { color: var(--danger); margin-top: 12px; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+
+.theme-banner { margin: 20px 0; padding: 20px; border-radius: var(--radius); background: linear-gradient(135deg, rgba(255,122,89,.18), rgba(124,108,255,.18)); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.theme-label { font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--sunset); text-transform: uppercase; }
+.theme-name { font-size: 24px; font-weight: 800; margin-top: 2px; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); font-size: 14px; color: var(--muted); }
+.tab.active { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+
+/* Posts */
+.post { overflow: hidden; margin-bottom: 24px; }
+.post-img { width: 100%; max-height: 520px; object-fit: cover; display: block; }
+.post-body { padding: 4px 16px 8px; }
+.post-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); padding: 12px 0 4px; }
+.hashtag { color: var(--sunset); font-weight: 600; }
+.caption-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
+.caption-text { font-size: 16px; line-height: 1.45; }
+.caption-top { font-weight: 600; }
+
+/* Votes */
+.vote { display: flex; align-items: center; gap: 2px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 3px; flex-shrink: 0; }
+.vote-btn { width: 32px; height: 32px; border-radius: 999px; border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s, transform .1s; }
+.vote-btn:hover { background: var(--card-hover); color: var(--text); }
+.vote-btn:active { transform: scale(0.9); }
+.vote-btn.up.active { background: var(--accent); color: white; }
+.vote-btn.down.active { background: var(--danger); color: white; }
+.score { min-width: 26px; text-align: center; font-weight: 700; font-size: 14px; }
+
+/* Upload */
+.dropzone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 44px 20px; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.dropzone:hover, .dropzone.dragging { border-color: var(--accent); background: var(--accent-soft); }
+.preview { width: 100%; border-radius: var(--radius); display: block; margin-top: 16px; max-height: 480px; object-fit: cover; }
+
+/* Login / name pages */
+.center-page { min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+.auth-card { width: 100%; max-width: 400px; padding: 32px; text-align: center; }
+.input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 15px; }
+.input:focus { outline: none; border-color: var(--accent); }
+
+.empty { text-align: center; padding: 48px 16px; }
+
+@media (max-width: 480px) {
+  .page-title { font-size: 26px; }
+  .caption-text { font-size: 15px; }
 }
