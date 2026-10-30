@@ -44,7 +44,16 @@ export default async function Home({
       .order('created_at', { ascending: false })
       .limit(90)
 
-  const captions = ((data as CaptionRow[]) ?? []).map((c) => ({
+  // Hide photos an admin marked as not public
+  const { data: publicImages, error: imagesError } = await supabase
+      .from('images')
+      .select('url')
+      .eq('is_public', true)
+  const visible = new Set((publicImages ?? []).map((i) => i.url as string))
+
+  const captions = ((data as CaptionRow[]) ?? [])
+      .filter((c) => imagesError || visible.has(c.image_url))
+      .map((c) => ({
     ...c,
     score: c.votes.reduce((sum, v) => sum + v.value, 0),
     userVote: c.votes.find((v) => v.user_id === user?.id)?.value ?? 0,
